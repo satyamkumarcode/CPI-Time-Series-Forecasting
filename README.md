@@ -51,21 +51,30 @@ This project implements a robust time series forecasting model to predict India'
 ```
 CPI-Time-Series-Forecasting/
 │
-├── CPI_TimeSeries_Analysis__1_.ipynb    # Main Jupyter notebook
-├── TSF_Assignment_Report.docx            # Detailed project report
-├── data/                                  # Dataset directory
-│   └── All_India_Index_july2019_20Aug2020.csv
-├── images/                                # Visualization outputs
-│   ├── original_timeseries.png
-│   ├── rolling_statistics.png
-│   ├── seasonal_decomposition.png
-│   ├── acf_pacf_plots.png
-│   ├── forecast_plot.png
-│   └── residual_analysis.png
-├── requirements.txt                       # Python dependencies
-├── README.md                              # Project documentation
-└── LICENSE                                # License file
+├── All_India_Index_july2019_20Aug2020.csv     # Raw dataset
+├── CPI_TimeSeries_Analysis_Satyam_kumar.ipynb # Main analysis notebook
+├── TSF_Assignment_2Report_Satyam_22051615.docx # Detailed project report
+├── README.md                                   # Project documentation
+└── requirements.txt                            # Python dependencies
 ```
+
+**File Descriptions:**
+
+- **All_India_Index_july2019_20Aug2020.csv** - Complete CPI dataset with multiple sectors and categories
+- **CPI_TimeSeries_Analysis_Satyam_kumar.ipynb** - Jupyter notebook containing:
+  - Data loading and preprocessing
+  - Exploratory Data Analysis (EDA)
+  - Stationarity testing
+  - ARIMA model selection and training
+  - Forecasting and evaluation
+  - Visualizations and insights
+- **TSF_Assignment_2Report_Satyam_22051615.docx** - Comprehensive 5-page report with:
+  - Dataset overview
+  - Methodology explanation
+  - Model selection rationale
+  - Results and error analysis
+  - Conclusions and future work
+- **README.md** - Project documentation (this file)
 
 ## 🛠️ Installation
 
@@ -79,7 +88,7 @@ CPI-Time-Series-Forecasting/
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/yourusername/CPI-Time-Series-Forecasting.git
+git clone https://github.com/satyamkumarcode/CPI-Time-Series-Forecasting.git
 cd CPI-Time-Series-Forecasting
 ```
 
@@ -96,7 +105,21 @@ pip install -r requirements.txt
 
 4. **Launch Jupyter Notebook**
 ```bash
-jupyter notebook CPI_TimeSeries_Analysis__1_.ipynb
+jupyter notebook CPI_TimeSeries_Analysis_Satyam_kumar.ipynb
+```
+
+## 📦 Requirements
+
+Create a `requirements.txt` file with the following dependencies:
+```txt
+pandas>=1.3.0
+numpy>=1.21.0
+matplotlib>=3.4.0
+seaborn>=0.11.0
+statsmodels>=0.13.0
+scikit-learn>=0.24.0
+jupyter>=1.0.0
+notebook>=6.4.0
 ```
 
 ## 🚀 Usage
@@ -105,7 +128,7 @@ jupyter notebook CPI_TimeSeries_Analysis__1_.ipynb
 
 1. Open the Jupyter notebook:
 ```bash
-jupyter notebook CPI_TimeSeries_Analysis__1_.ipynb
+jupyter notebook CPI_TimeSeries_Analysis_Satyam_kumar.ipynb
 ```
 
 2. Run all cells sequentially to:
@@ -123,11 +146,12 @@ import pandas as pd
 from statsmodels.tsa.arima.model import ARIMA
 
 # Load data
-url = 'https://raw.githubusercontent.com/satyamkumarcode/delhi_aqi/refs/heads/main/All_India_Index_july2019_20Aug2020.csv'
-df = pd.read_csv(url)
+df = pd.read_csv('All_India_Index_july2019_20Aug2020.csv')
 
-# Filter Rural+Urban sector
+# Filter Rural+Urban sector and extract CPI values
 ts = df[df['Sector'] == 'Rural+Urban']['General index']
+ts.index = pd.to_datetime(df[df['Sector'] == 'Rural+Urban']['Year'].astype(str) + '-' + 
+                          df[df['Sector'] == 'Rural+Urban']['Month'], format='%Y-%B')
 
 # Fit ARIMA model
 model = ARIMA(ts, order=(1, 1, 0))
@@ -141,52 +165,61 @@ print(forecast)
 ## 🔬 Methodology
 
 ### 1. Data Preparation
-- Data loading and cleaning
-- Date parsing and indexing
-- Sector filtering (Rural + Urban Combined)
+- Data loading from CSV file
+- Filtering Rural+Urban Combined sector
+- Date parsing and time series indexing
+- Data quality checks
 
 ### 2. Exploratory Data Analysis (EDA)
 - Time series visualization
-- Rolling statistics analysis
-- Seasonal decomposition
+- Rolling statistics analysis (mean and standard deviation)
+- Seasonal decomposition (trend, seasonal, residual)
 - Trend identification
 
 ### 3. Stationarity Testing
 - Augmented Dickey-Fuller (ADF) test
-- First-order differencing
-- Validation of stationarity
+- Visual inspection with rolling statistics
+- First-order differencing for stationarity
+- Validation of transformed series
 
 ### 4. Model Selection
-- ACF and PACF analysis
-- Grid search over ARIMA parameters (p, d, q)
+- ACF (Autocorrelation Function) analysis
+- PACF (Partial Autocorrelation Function) analysis
+- Grid search over ARIMA parameters (p, d, q) from 0 to 5
 - AIC-based optimization
 - **Selected Model:** ARIMA(1, 1, 0)
 
 ### 5. Model Training & Validation
-- Train-test split (80-20)
+- Train-test split (80-20 ratio)
+  - Training: 70 months
+  - Testing: 17 months
 - Model fitting on training data
 - Performance evaluation on test set
 
 ### 6. Forecasting
 - Test set predictions
-- 12-month ahead forecasts
+- 12-month ahead future forecasts (July 2020 - June 2021)
 - Confidence interval estimation
 
 ### 7. Model Evaluation
 - Residual analysis
-- Error metrics calculation (MAE, MSE, RMSE, MAPE)
-- Model validation
+- Error metrics calculation:
+  - Mean Absolute Error (MAE)
+  - Mean Squared Error (MSE)
+  - Root Mean Square Error (RMSE)
+  - Mean Absolute Percentage Error (MAPE)
+- Model validation and diagnostics
 
 ## 📈 Results
 
 ### Performance Metrics
 
-| Metric | Value |
-|--------|-------|
-| Mean Absolute Error (MAE) | 7.23 |
-| Root Mean Square Error (RMSE) | 8.18 |
-| Mean Absolute Percentage Error (MAPE) | 4.61% |
-| **Model Accuracy** | **95.39%** |
+| Metric | Value | Description |
+|--------|-------|-------------|
+| Mean Absolute Error (MAE) | 7.23 | Average absolute forecast error |
+| Root Mean Square Error (RMSE) | 8.18 | Square root of average squared errors |
+| Mean Absolute Percentage Error (MAPE) | 4.61% | Average percentage error |
+| **Model Accuracy** | **95.39%** | Overall prediction accuracy |
 
 ### Historical Analysis
 
@@ -194,6 +227,8 @@ print(forecast)
 |--------|-------|
 | Total Inflation (2013-2020) | 45.12% |
 | Annual Average Inflation | 6.09% |
+| Starting CPI (Jan 2013) | 104.6 |
+| Ending CPI (Jun 2020) | 151.8 |
 | Training Set | 70 months (80%) |
 | Testing Set | 17 months (20%) |
 
@@ -202,64 +237,89 @@ print(forecast)
 - **Forecast Period:** July 2020 - June 2021 (12 months)
 - **Predicted CPI Range:** 153.73 - 156.66
 - **Expected Inflation:** ~1.9% over forecast period
+- **Trend:** Continued upward trajectory consistent with historical patterns
 
 ## 📊 Visualizations
 
-The project includes comprehensive visualizations:
+The notebook includes comprehensive visualizations:
 
 1. **Original Time Series Plot**
-   - Displays CPI trend from 2013-2020
+   - Monthly CPI values from 2013-2020
+   - Clear upward trend visualization
 
 2. **Rolling Statistics**
-   - Rolling mean and standard deviation
+   - 12-month rolling mean
+   - 12-month rolling standard deviation
+   - Trend characterization
 
 3. **Seasonal Decomposition**
-   - Trend, seasonal, and residual components
+   - Trend component
+   - Seasonal component
+   - Residual component
 
-4. **ACF & PACF Plots**
-   - Autocorrelation analysis for parameter selection
+4. **Stationarity Analysis**
+   - Before and after differencing
+   - ADF test results
 
-5. **Training & Testing Forecasts**
-   - Model predictions vs actual values
+5. **ACF & PACF Plots**
+   - Autocorrelation patterns
+   - Parameter selection guidance
 
-6. **Residual Analysis**
-   - Error distribution and randomness check
+6. **Training & Testing Forecasts**
+   - Actual vs predicted comparison
+   - Visual model validation
 
-7. **Future Forecast Plot**
-   - 12-month ahead predictions with confidence intervals
+7. **Residual Analysis**
+   - Residual plot
+   - Histogram of residuals
+   - QQ plot for normality check
+
+8. **Future Forecast Plot**
+   - 12-month predictions
+   - Historical data overlay
 
 ## 💻 Technologies Used
 
-- **Python 3.8+**
+- **Python 3.8+** - Core programming language
 - **pandas** - Data manipulation and analysis
 - **numpy** - Numerical computing
 - **matplotlib** - Data visualization
 - **seaborn** - Statistical data visualization
-- **statsmodels** - Statistical modeling and time series analysis
+- **statsmodels** - Time series analysis and ARIMA modeling
 - **scikit-learn** - Machine learning metrics
 - **jupyter** - Interactive computing environment
 
 ## 🔑 Key Findings
 
-1. **Strong Model Performance:** Achieved 95.39% accuracy with minimal error metrics
+1. **Strong Model Performance:** Achieved 95.39% accuracy with MAPE of only 4.61%
 2. **Consistent Inflation Trend:** CPI increased by 45.12% over 7.5 years
-3. **Reliable Forecasts:** Future predictions maintain observed patterns
-4. **Model Validation:** Residuals show random distribution with no systematic bias
-5. **Economic Insights:** Annual average inflation of 6.09% indicates sustained inflationary pressure
+3. **Reliable Forecasts:** Future predictions maintain observed upward patterns
+4. **Model Validation:** Residuals show random distribution with zero mean
+5. **Economic Insights:** Annual average inflation of 6.09% indicates sustained inflationary pressure in India
+6. **Optimal Parameters:** ARIMA(1,1,0) provides best balance of accuracy and simplicity
+7. **Forecast Reliability:** Low error metrics confirm model's predictive capability
 
 ## 🚀 Future Enhancements
 
-- [ ] Implement SARIMA for seasonal pattern detection
-- [ ] Incorporate exogenous variables (GDP, oil prices) using SARIMAX
-- [ ] Compare with machine learning models (LSTM, Prophet)
-- [ ] Develop ensemble forecasting methods
-- [ ] Create interactive dashboard for real-time forecasting
-- [ ] Extend analysis to sector-specific CPI (Rural vs Urban)
+- [ ] Implement SARIMA for enhanced seasonal pattern detection
+- [ ] Incorporate exogenous variables (GDP growth, oil prices, exchange rates) using SARIMAX
+- [ ] Compare with machine learning models:
+  - LSTM (Long Short-Term Memory) networks
+  - Facebook Prophet
+  - XGBoost for time series
+- [ ] Develop ensemble forecasting methods combining multiple models
+- [ ] Create interactive dashboard using Plotly/Dash for real-time forecasting
+- [ ] Extend analysis to sector-specific CPI (separate Rural and Urban analysis)
 - [ ] Implement automated model retraining pipeline
+- [ ] Add category-wise CPI analysis (Food, Housing, Transportation, etc.)
+- [ ] Perform comparative state-wise CPI analysis
+- [ ] Deploy model as REST API for real-time predictions
 
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
+
+### How to Contribute:
 
 1. Fork the project
 2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
@@ -267,14 +327,21 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
+### Contribution Guidelines:
+
+- Ensure code follows PEP 8 style guidelines
+- Add appropriate comments and documentation
+- Update README if adding new features
+- Test your changes thoroughly
+
 ## 👨‍💻 Author
 
 **Satyam Kumar**
-- Roll Number: 22051615
-- Program: B.Tech in Computer Science Engineering
-- Institution: KIIT Deemed to be University
-- GitHub: [@yourusername](https://github.com/yourusername)
-- LinkedIn: [Your LinkedIn](https://linkedin.com/in/yourprofile)
+- **Roll Number:** 22051615
+- **Program:** B.Tech in Computer Science Engineering
+- **Institution:** KIIT Deemed to be University
+- **GitHub:** [@satyamkumarcode](https://github.com/satyamkumarcode)
+- **Project Supervisor:** Prof. N Sangita Achary
 
 ## 📄 License
 
@@ -282,20 +349,50 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- Prof. N Sangita Achary - Project Supervisor
-- KIIT Deemed to be University
-- Government of India - Dataset source
-- Statsmodels development team
+- **Prof. N Sangita Achary** - Project Supervisor and Guidance
+- **KIIT Deemed to be University** - Academic Support
+- **Government of India** - CPI Dataset Provider
+- **Statsmodels Development Team** - ARIMA Implementation
+- **Python Community** - Open-source tools and libraries
+
+## 📚 References
+
+- Box, G. E. P., & Jenkins, G. M. (1976). Time Series Analysis: Forecasting and Control
+- Hyndman, R. J., & Athanasopoulos, G. (2021). Forecasting: Principles and Practice
+- Government of India Ministry of Statistics - Official CPI Documentation
+- Statsmodels Documentation: https://www.statsmodels.org/
 
 ## 📞 Contact
 
-For any queries or suggestions, please reach out:
-- Email: your.email@example.com
-- Project Link: [https://github.com/yourusername/CPI-Time-Series-Forecasting](https://github.com/yourusername/CPI-Time-Series-Forecasting)
+For any queries, suggestions, or collaboration opportunities:
+
+- **GitHub Issues:** [Create an issue](https://github.com/satyamkumarcode/CPI-Time-Series-Forecasting/issues)
+- **Email:** satyam.kumar@example.com
+- **Project Link:** [https://github.com/satyamkumarcode/CPI-Time-Series-Forecasting](https://github.com/satyamkumarcode/CPI-Time-Series-Forecasting)
+
+## 📊 Project Status
+
+✅ **Completed** - October 30, 2025
+
+- [x] Data collection and preprocessing
+- [x] Exploratory Data Analysis
+- [x] Model selection and training
+- [x] Performance evaluation
+- [x] Documentation and reporting
+- [ ] Model deployment (Future work)
+- [ ] Real-time forecasting dashboard (Future work)
 
 ---
 
 ⭐ **If you found this project helpful, please consider giving it a star!** ⭐
+
+---
+
+**Assignment Submission Details:**
+- **Course:** Time Series Forecasting
+- **Assignment:** Assignment 2
+- **Submission Date:** October 30, 2025
+- **Status:** Submitted ✓
 
 ---
 
